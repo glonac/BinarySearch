@@ -22,7 +22,6 @@ function createFile($fileName, $count)//Создание файла
         fwrite($file, "ключ" . $i . "\t" . "значение" . $i . "\x0A");
     }
 }
-
 function getTime($time = false)//Подсчет времени
 {
     if (!$time)
@@ -32,25 +31,24 @@ function getTime($time = false)//Подсчет времени
         return round(microtime(true) - $time , 5);
     }
 }
-
-function binarySearch($fileName, $desiredValue)//Функция бинарного поиска
-{
+function BinarySearch($fileName ,$key ){ //Функция бинарного поиска
     $file = new SplFileObject($fileName);
-    $start = 0;
-    $end = count(file($fileName)) - 1;
-
-    while ($start <= $end) {
-        $middle = floor(($start + $end) / 2);
+    $end = count(file($fileName))-1;
+    $start = 0 ;
+    while ($start <= $end)
+    {
+        $middle = floor(($end + $start)/2) ;
         $file->seek($middle);
-        $elem = explode("\t", $file->current());
-        $offset = strnatcmp($elem[0], $desiredValue);
-        if ($offset > 0) {
+        $elem = explode("\t" , $file->current());
+        $offset = strnatcmp($elem[0], $key);
+        if ($offset > 0){
             $end = $middle - 1;
-        } elseif ($offset < 0) {
-            $start = $middle + 1;
-        } else {
+        }elseif ($offset < 0 ) {
+            $start = $middle  + 1;
+        }else {
             return $elem[1];
         }
+
     }
     return 'undef';
 }
@@ -59,26 +57,27 @@ if (!file_exists("/$fileName")) {
     createFile($fileName, 200000);
 }
 if (isset($_POST['key'])) {
-    $desiredValue = "ключ" . $_POST['key'];
+    $key= "ключ" . $_POST['key'];
 } else {
-    $desiredValue = "ключ49999";
+    $key = "ключ49999";
 }
 if (isset($_POST['submit'], $_POST['key']) && !empty($_POST['key'])) {
     $time = getTime();
-    $result = binarySearch($fileName, $desiredValue);
+    $result = binarySearch($fileName, $key);
     $time = getTime($time);
-    $view = "<li> Ответ - " . $result . "</li><li>" . "Время- " . $time . "секунд </li>";
+    $view = "<li> Ответ - " . $result . "</li><li>" . "Время- " . $time . " секунд </li>";
 } else {
     $view = " <label> Введите число в поле для ввода  </label>";
 }
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Bootstrap CSS -->
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <title>Бинарный поиск</title>
